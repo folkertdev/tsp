@@ -64,6 +64,75 @@ impl Store {
             .map(FlatReceivedTspMessage::from)
             .map_err(Error)
     }
+
+    #[wasm_bindgen]
+    pub fn make_relationship_request(
+        &self,
+        sender: String,
+        receiver: String,
+        route: Option<Vec<String>>,
+    ) -> Result<SealedMessage, Error> {
+        let route_items: Vec<&str> = route.iter().flatten().map(|s| s.as_str()).collect();
+
+        let (url, bytes) = self
+            .0
+            .make_relationship_request(
+                &sender,
+                &receiver,
+                route.as_ref().map(|_| route_items.as_slice()),
+            )
+            .map_err(Error)?;
+
+        Ok(SealedMessage {
+            url: url.to_string(),
+            bytes,
+        })
+    }
+
+    #[wasm_bindgen]
+    pub fn make_relationship_accept(
+        &self,
+        sender: String,
+        receiver: String,
+        thread_id: Vec<u8>,
+        route: Option<Vec<String>>,
+    ) -> Result<SealedMessage, Error> {
+        let route_items: Vec<&str> = route.iter().flatten().map(|s| s.as_str()).collect();
+
+        let thread_id = thread_id.try_into().unwrap();
+
+        let (url, bytes) = self
+            .0
+            .make_relationship_accept(
+                &sender,
+                &receiver,
+                thread_id,
+                route.as_ref().map(|_| route_items.as_slice()),
+            )
+            .map_err(Error)?;
+
+        Ok(SealedMessage {
+            url: url.to_string(),
+            bytes,
+        })
+    }
+
+    #[wasm_bindgen]
+    pub fn make_relationship_cancel(
+        &self,
+        sender: String,
+        receiver: String,
+    ) -> Result<SealedMessage, Error> {
+        let (url, bytes) = self
+            .0
+            .make_relationship_cancel(&sender, &receiver)
+            .map_err(Error)?;
+
+        Ok(SealedMessage {
+            url: url.to_string(),
+            bytes,
+        })
+    }
 }
 
 #[wasm_bindgen]

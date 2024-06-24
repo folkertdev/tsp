@@ -29,6 +29,18 @@ class Store {
         return this.inner.seal_message(sender, receiver, nonconfidential_data, byteArray);
     }
 
+    make_relationship_request(...args) {
+        return this.inner.make_relationship_request(..args);
+    }
+
+    make_relationship_accept(...args) {
+        return this.inner.make_relationship_accept(..args);
+    }
+
+    make_relationship_cancel(...args) {
+        return this.inner.make_relationship_cancel(..args);
+    }
+
     open_message(...args) {
         const flatMessage = this.inner.open_message(...args);
         return ReceivedTspMessage.fromFlat(flatMessage);
